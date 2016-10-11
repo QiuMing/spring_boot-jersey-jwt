@@ -36,7 +36,8 @@ GET http://localhost:8080/users
 返回mongo中的所有user文档
 
 
-## 
-集成通用 Mapper 和 分页插件 Mybatis-PageHelper 集成
-通用 Mapper https://github.com/abel533/Mapper)
-Myabtis 分页插件 https://github.com/pagehelper/Mybatis-PageHelper
+
+## 集成通用 Mapper 和 分页插件 Mybatis-PageHelper 集成、以及 生成 mapper 的插件
+* 通用 Mapper https://github.com/abel533/Mapper)
+* Myabtis 分页插件 https://github.com/pagehelper/Mybatis-PageHelper
+* test 方法见UserBeanMapperTest ，生成 mapper 

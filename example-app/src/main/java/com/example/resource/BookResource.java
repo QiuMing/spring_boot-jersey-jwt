@@ -38,13 +38,9 @@ public class BookResource {
     @Inject
     private BookService bookService;
 
-    @QueryParam("book")
-    private Book book;
-
     @Context
     private UriInfo uriInfo;
 
-    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @POST

@@ -2,7 +2,6 @@ package com.example.resource;
 
 import com.example.annotation.Cache;
 import com.example.entity.bean.UserBean;
-import com.example.entity.mongo.User;
 import com.example.service.UserBeanService;
 import com.example.service.UserService;
 
@@ -28,7 +27,7 @@ import javax.ws.rs.core.Response;
  * Created by binglin on 2016/9/17.
  */
 
-@Path("/users")
+@Path("/user")
 @PermitAll
 @RolesAllowed("user")
 public class UserResource {
@@ -41,13 +40,12 @@ public class UserResource {
     @Inject
     private UserBeanService userBeanService;
 
-    @GET
+    /*@GET
     public Response list() {
         List<User> all = userService.findAll();
         return Response.ok().entity(all).type(MediaType.APPLICATION_JSON).build();
-    }
+    }*/
 
-    @Path("bean")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Cache
@@ -57,7 +55,6 @@ public class UserResource {
         return responseBuilder.build();
     }
 
-    @Path("bean")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUserBean(UserBean userBean) {

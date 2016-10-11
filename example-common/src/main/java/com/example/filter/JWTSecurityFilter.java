@@ -10,10 +10,12 @@ import com.example.repository.UserRepository;
 import com.example.util.TokenUtil;
 
 import org.glassfish.jersey.server.ContainerRequest;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -30,19 +32,22 @@ import javax.ws.rs.ext.Provider;
  * https://simplapi.wordpress.com/2013/01/24/jersey-jax-rs-implements-a-http-basic-auth-decoder/
  */
 
+@Component
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class JWTSecurityFilter implements ContainerRequestFilter {
 
-    final static Logger logger = Logger.getLogger(JWTSecurityFilter.class.getName());
 
+    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(JWTSecurityFilter.class);
     /**
      * HK2 Injection.
      */
     @Context
     UserRepository dao;
 
-    String key = "qwertyuiop";
+
+    @Value("${example.jwt.key}")
+    String key;
 
     @Context
     SecurityContext securityContext;
@@ -64,7 +69,7 @@ public class JWTSecurityFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
-        logger.info("进入 filter");
+        logger.info("access into filter,key:{}",key);
         String method = requestContext.getMethod().toLowerCase();
         String path = ((ContainerRequest) requestContext).getPath(true).toLowerCase();
 
@@ -76,12 +81,18 @@ public class JWTSecurityFilter implements ContainerRequestFilter {
         }
 
         String authorizationHeader = ((ContainerRequest) requestContext).getHeaderString("authorization");
+
+        logger.info("authorizationHeader:{}",authorizationHeader);
+
         if (authorizationHeader == null) {
             requestContext.setSecurityContext(new SecurityContextAuthorizer(uriInfo, () -> "anonymous", new String[]{"anonymous"}));
             return;
         }
 
         String strToken = extractJwtTokenFromAuthorizationHeader(authorizationHeader);
+
+        logger.info("strToken:{}",strToken);
+
         if (TokenUtil.isValid(strToken, key)) {
             String name = TokenUtil.getName(strToken, key);
             String[] roles = TokenUtil.getRoles(strToken, key);

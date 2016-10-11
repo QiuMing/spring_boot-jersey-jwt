@@ -10,14 +10,17 @@ import com.example.exception.EntityNotFoundException;
 import com.example.repository.UserRepository;
 import com.example.util.TokenUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -32,12 +35,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+@Component
 @PermitAll
 @Path("/authentication")
 public class AuthenticationResource {
 
-    private final static Logger logger = Logger.getLogger(AuthenticationResource.class.getName());
-
+    private final static Logger logger = LoggerFactory.getLogger(AuthenticationResource.class);
     /**
      * HK2 Injection.
      */
@@ -48,7 +51,9 @@ public class AuthenticationResource {
     private StringRedisTemplate stringRedisTemplate;
 
 
-    String key = "qwertyuiop";
+    @Value("${example.jwt.key}")
+    String key;
+
 
     String redisKey = "USER_{0}_TOKEN";
 
@@ -61,10 +66,7 @@ public class AuthenticationResource {
         Date expiry = getExpiryDate(120);
         User user = authenticate(username, password);
 
-
-        // Issue a token (can be a random String persisted to a database or a JWT token)
-        // The issued token must be associated to a user
-        // Return the issued token
+        logger.info("key:{}",key);
         String jwtString = TokenUtil.getJWTString(username, user.getRoles(), user.getVersion(), user.getId(), expiry, key);
         Token token = new Token();
         token.setAuthToken(jwtString);
@@ -80,7 +82,7 @@ public class AuthenticationResource {
     public Response refreshToken(@QueryParam("token") String token) {
 
         logger.info("token is "+token);
-        if (TokenUtil.isValidByStringKey(token, key)) {
+        if (TokenUtil.isValid(token, key)) {
             Long id = Long.valueOf(TokenUtil.getId(token, key));
             String tokenInRedis = stringRedisTemplate.opsForValue().get(MessageFormat.format(redisKey, id.toString()));
 
@@ -100,8 +102,7 @@ public class AuthenticationResource {
             opsForValue.set(MessageFormat.format(redisKey, id.toString()), jwtString, 120, TimeUnit.MINUTES);
             return Response.ok(jwtToken).build();
         } else {
-
-            logger.info("404");
+            logger.info("刷新 token 失效");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }

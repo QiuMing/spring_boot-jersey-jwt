@@ -6,7 +6,6 @@ package com.example.util;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.security.Key;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -47,26 +46,15 @@ public class TokenUtil {
                 .setExpiration(expires)
                 .setIssuedAt(new Date())
                 .setId(String.valueOf(version))
-                .signWith(signatureAlgorithm, "qwertyuiop")
+                .signWith(signatureAlgorithm, key)
                 .compact();
         return jwtString;
     }
 
+
     public static boolean isValid(String token, String key) {
         try {
             Jwts.parser().setSigningKey(key).parseClaimsJws(token.trim());
-//            Jwts.parser().setSigningKey(key).parseClaimsJws(token.trim());
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean isValidByStringKey(String token, String key) {
-        try {
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token.trim());
-//            Jwts.parser().setSigningKey(key).parseClaimsJws(token.trim());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,8 +65,6 @@ public class TokenUtil {
     public static String getName(String jwsToken, String key) {
         if (isValid(jwsToken, key)) {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
-
-//            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
             return claimsJws.getBody().getSubject().split("#")[0];
         }
         return null;
@@ -87,8 +73,6 @@ public class TokenUtil {
     public static String getId(String jwsToken, String key) {
         if (isValid(jwsToken, key)) {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
-
-//            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
             return claimsJws.getBody().getSubject().split("#")[1];
         }
         return null;
@@ -97,7 +81,6 @@ public class TokenUtil {
     public static String[] getRoles(String jwsToken, String key) {
         if (isValid(jwsToken, key)) {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
-//            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
             return claimsJws.getBody().getAudience().split(",");
         }
         return new String[]{};
@@ -106,7 +89,6 @@ public class TokenUtil {
     public static int getVersion(String jwsToken, String key) {
         if (isValid(jwsToken, key)) {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
-//            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(key).parseClaimsJws(jwsToken);
             return Integer.parseInt(claimsJws.getBody().getId());
         }
         return -1;
