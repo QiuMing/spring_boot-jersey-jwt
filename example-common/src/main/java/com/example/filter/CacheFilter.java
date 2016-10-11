@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.stream.Stream;
 
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -21,7 +19,6 @@ import javax.ws.rs.ext.Provider;
  * Created by binglin on 2016/10/11.
  */
 @Provider
-@Priority(Priorities.USER)
 public class CacheFilter implements ContainerResponseFilter {
 
     @Override

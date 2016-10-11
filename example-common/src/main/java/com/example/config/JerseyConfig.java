@@ -2,28 +2,19 @@ package com.example.config;
 
 import com.example.filter.CacheFilter;
 import com.example.filter.JWTSecurityFilter;
+import com.example.filter.RequestLimitFilter;
 
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.glassfish.jersey.servlet.ServletContainer;
-import org.glassfish.jersey.servlet.ServletProperties;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.crypto.SecretKey;
 import javax.inject.Inject;
-
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 
 /**
  * Created by binglin on 2016/9/11.
@@ -43,6 +34,8 @@ public class JerseyConfig extends ResourceConfig {
         register(JWTSecurityFilter.class);
         // cache filter
         register(CacheFilter.class);
+
+        register(RequestLimitFilter.class);
         // turn on Jackson, Moxy isn't that good of a solution.
         register(JacksonFeature.class);
         //logging feature

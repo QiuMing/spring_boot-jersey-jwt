@@ -1,5 +1,6 @@
 package com.example.resource;
 
+import com.example.annotation.RequestLimit;
 import com.example.entity.mongo.Book;
 import com.example.exception.ServiceException;
 import com.example.repository.SequenceBuilder;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -53,7 +55,6 @@ public class BookResource {
     }
 
 
-    @Path("{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> get(@PathParam("id") Long id) throws ServiceException {
@@ -72,6 +73,15 @@ public class BookResource {
         book.setName(name);
         bookService.save(book);
         return "success";
+    }
+
+    @Path("all")
+    @GET
+    @RequestLimit(count = 2,time = 1000)
+    public Response list() {
+        System.out.println("+++++++++");
+        List<Book> all = bookService.listAll();
+        return Response.ok().entity(all).type(MediaType.APPLICATION_JSON).build();
     }
 
 

@@ -10,6 +10,7 @@ import com.example.repository.UserRepository;
 import com.example.util.TokenUtil;
 
 import org.glassfish.jersey.server.ContainerRequest;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,7 @@ import javax.ws.rs.ext.Provider;
 public class JWTSecurityFilter implements ContainerRequestFilter {
 
 
-    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(JWTSecurityFilter.class);
+    private final static Logger logger = LoggerFactory.getLogger(JWTSecurityFilter.class);
     /**
      * HK2 Injection.
      */
