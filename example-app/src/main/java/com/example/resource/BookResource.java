@@ -7,7 +7,6 @@ import com.example.repository.SequenceBuilder;
 import com.example.service.BookService;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -44,8 +43,6 @@ public class BookResource {
     @Context
     private UriInfo uriInfo;
 
-    @Inject
-    private StringRedisTemplate stringRedisTemplate;
 
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

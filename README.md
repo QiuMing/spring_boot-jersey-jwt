@@ -1,43 +1,71 @@
-# spring_boot-jersey-jwt
-## 运行
-1. 使用mongo和mysql，建议使用docker安装，mongo中可以手动建立一个名为user的collection，其中有个具有用户名和密码的文档
+# 介绍
+本项目主要使用了 Sping Boot 、 Jersey 、JWT 来构建 Resetful 风格的服务端。
+
+## 技术选型
+
+|名称|
+|---|
+|Spring Boot 最新版本|
+|Jersey,使用 Spring Boot 提供的 starter |
+|Mongo,使用 spring-boot-starter-data-mongodb|
+|Redis,整合了 redisson、spting-boot-starter-data-redis|
+|Mybats、通用Maper、及分页插件|
+
+
+## 环境准备
+
+* 启动前请确保启动了 MongoDB、Redis、Mysql
+* 数据库相关端口、名字、密码，请到 application.properties 中配置
+
+## 启动方式
+
+* 通过 idea 直接运行main方法即可
+
+* 在 example-app 目录下运行，还有些问题
 ```
-{ 
-    "_id" : NumberLong(20000), 
-    "_class" : "com.example.entity.mongo.User", 
-    "userName" : "binglin", 
-    "password" : "123456", 
-    "roles" : [
-        "user"
-    ], 
-    "version" : NumberInt(1)
-}
+mvn spring-boot:run
 ```
-2. 直接运行main方法即可
 
-## 测试，使用postman
-1. 获取token
+## mybatis 
 
-	post http://localhost:8080/authentication 
-	body选择x-www-form-urlencoded
-	username  binglin
-	password 123456		
-	返回
-	```
-	{
-  "authToken": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJKZXJzZXktU2VjdXJpdHktQmFzaWMiLCJzdWIiOiJiaW5nbGluIiwiYXVkIjoidXNlciIsImV4cCI6MTQ3NTg5ODA0MiwiaWF0IjoxNDc1ODk3MTQ0LCJqdGkiOiIxIn0.sNeMZqAh6V3cXV9IYxIvydfoh0sTCAXsdCl1FcSBclA",
-  "expires": "2016-10-08T03:40:42.863 UTC"
-}
-```
-2. 使用token访问rest接口
-GET http://localhost:8080/users
-在Headers 中添加
-`Authorization Bearer "${上一步获取的token}"
-返回mongo中的所有user文档
-
-
-
-## 集成通用 Mapper 和 分页插件 Mybatis-PageHelper 集成、以及 生成 mapper 的插件
-* 通用 Mapper https://github.com/abel533/Mapper)
-* Myabtis 分页插件 https://github.com/pagehelper/Mybatis-PageHelper
+* 通用 Mapper 文档 https://github.com/abel533/Mapper
+* Myabtis 分页插件 文档 https://github.com/pagehelper/Mybatis-PageHelper
 * test 方法见UserBeanMapperTest ，生成 mapper 
+* mybatis 代码生成，通过 maven 插件
+
+## 已经实现的自定义注解
+
+* @Cache 基于 Etag 实现的缓存注解
+* @RequireLimit(count = 3,time = 60000)  接口访问频率限制注解
+
+
+## JWT 认证流程
+
+### 用户注册
+
+见 UserRepositoryTest 方法
+
+### 用户登陆获取 token
+
+* 带上用户名和密码访问 authentication
+```
+curl --request POST \
+  --url http://localhost:8080/authentication \
+  --header 'cache-control: no-cache' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data 'username=binglin&password=123456'
+```
+
+### 访问需要认证的资源
+
+* 在Headers 中添加 `Authorization Bearer "${token}"
+```
+curl --request POST \
+  --url http://localhost:8080/user \
+  --header 'authorization: bearer  eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJKZXJzZXktU2VjdXJpdHktQmFzaWMiLCJzdWIiOiJiaW5nbGluIzIwMDAwIiwiYXVkIjoidXNlciIsImV4cCI6MTQ3NjE4MjU5MSwiaWF0IjoxNDc2MTc1MzkxLCJqdGkiOiIxMSJ9.qsdjujdIwh_jHS-ImKi2B-j2BX_upgOgfs8Oa7v7bSI' \
+  --header 'cache-control: no-cache' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --header 'postman-token: fb4def64-2672-b09a-0b41-fce91b520028' \
+  --data 'username=binglin&password=123456'
+```
+

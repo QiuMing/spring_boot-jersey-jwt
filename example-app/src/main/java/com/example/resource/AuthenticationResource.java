@@ -35,7 +35,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-@Component // value
+@Component
 @PermitAll
 @Path("/authentication")
 public class AuthenticationResource {
@@ -66,13 +66,18 @@ public class AuthenticationResource {
         Date expiry = getExpiryDate(120);
         User user = authenticate(username, password);
 
-        logger.info("key:{}",key);
+        logger.info("JWT key:{}", key);
         String jwtString = TokenUtil.getJWTString(username, user.getRoles(), user.getVersion(), user.getId(), expiry, key);
         Token token = new Token();
         token.setAuthToken(jwtString);
         token.setExpires(expiry);
         ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
-        opsForValue.set(MessageFormat.format(redisKey, user.getId().toString()), jwtString, 120, TimeUnit.MINUTES);
+
+        String key = MessageFormat.format(redisKey, user.getId().toString());
+        opsForValue.set(key, jwtString, 120, TimeUnit.MINUTES);
+
+        String value = opsForValue.get(key);
+        logger.info("value:{}", value);
         return Response.ok(token).build();
     }
 
@@ -81,7 +86,7 @@ public class AuthenticationResource {
     @Produces("application/json")
     public Response refreshToken(@QueryParam("token") String token) {
 
-        logger.info("token is "+token);
+        logger.info("token is " + token);
         if (TokenUtil.isValid(token, key)) {
             Long id = Long.valueOf(TokenUtil.getId(token, key));
             String tokenInRedis = stringRedisTemplate.opsForValue().get(MessageFormat.format(redisKey, id.toString()));

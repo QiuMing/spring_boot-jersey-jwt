@@ -38,11 +38,6 @@ public class UserResource {
     @Inject
     private UserBeanService userBeanService;
 
-    /*@GET
-    public Response list() {
-        List<User> all = userService.findAll();
-        return Response.ok().entity(all).type(MediaType.APPLICATION_JSON).build();
-    }*/
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
