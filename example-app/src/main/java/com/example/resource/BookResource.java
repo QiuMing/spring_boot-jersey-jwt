@@ -7,6 +7,7 @@ import com.example.repository.SequenceBuilder;
 import com.example.service.BookService;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -43,6 +44,9 @@ public class BookResource {
     @Context
     private UriInfo uriInfo;
 
+    @Inject
+    private StringRedisTemplate stringRedisTemplate;
+
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
@@ -73,6 +77,13 @@ public class BookResource {
         book.setName(name);
         bookService.save(book);
         return "success";
+    }
+
+    @Path("all2")
+    @GET
+    public Response list2() {
+        List<Book> all = bookService.listAll();
+        return Response.ok().entity(all).type(MediaType.APPLICATION_JSON).build();
     }
 
     @Path("all")

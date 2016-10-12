@@ -35,7 +35,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-@Component
+@Component // value
 @PermitAll
 @Path("/authentication")
 public class AuthenticationResource {
