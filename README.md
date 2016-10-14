@@ -26,7 +26,7 @@
 mvn spring-boot:run
 ```
 
-## mybatis 
+## Mybatis 
 
 * 通用 Mapper 文档 https://github.com/abel533/Mapper
 * Myabtis 分页插件 文档 https://github.com/pagehelper/Mybatis-PageHelper
@@ -69,3 +69,26 @@ curl --request POST \
   --data 'username=binglin&password=123456'
 ```
 
+## 指定 profile
+
+* 在 application.propertites 指定，这样启动的时候不需要带参数
+```
+spring.profiles.active=test
+```
+
+* 在 mvn  或者 gradle 中指定 profile
+```
+mvn clean package -Dmaven.test.skip=true -P prod  
+mvn spring-boot:run  -Dspring.profiles.active=dev
+java -jar app.jar --spring.profiles.active=dev
+gradle bootRun -Dspring.profiles.active=dev
+```
+
+* 在 Idea 中指定 profile
+在  Run Configuration 中配置，甚至可以 Override parametres ,更多请见 [Faster Spring Boot with IntelliJ IDEA 14.1](https://blog.jetbrains.com/idea/2015/03/develop-spring-boot-applications-more-productively-with-intellij-idea-14-1/)
+
+## 指定 logback 配置文件
+
+```
+logging.config=classpath:logback-pro.xml
+```
