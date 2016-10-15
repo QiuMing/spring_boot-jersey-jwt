@@ -43,7 +43,16 @@ mvn spring-boot:run
 
 ### 用户注册
 
-见 UserRepositoryTest 方法
+```
+curl --request POST \
+  --url http://localhost:8080/authentication/register \
+  --header 'cache-control: no-cache' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --header 'postman-token: a1f1c08e-f2a5-2f18-47a3-cd7b34e24eae' \
+  --data 'username=test&password=123456'
+```
+
+或者在 UserRepositoryTest 方法运行 testAddUser 方法
 
 ### 用户登陆获取 token
 

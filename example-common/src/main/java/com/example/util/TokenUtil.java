@@ -45,7 +45,7 @@ public class TokenUtil {
                 .setAudience(StringUtils.join(Arrays.asList(roles), ","))
                 .setExpiration(expires)
                 .setIssuedAt(new Date())
-                .setId(String.valueOf(version))
+               // .setId(String.valueOf(version))
                 .signWith(signatureAlgorithm, key)
                 .compact();
         return jwtString;

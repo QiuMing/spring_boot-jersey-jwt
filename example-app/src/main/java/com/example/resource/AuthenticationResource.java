@@ -7,6 +7,7 @@ package com.example.resource;
 import com.example.entity.bean.Token;
 import com.example.entity.mongo.User;
 import com.example.exception.EntityNotFoundException;
+import com.example.repository.SequenceBuilder;
 import com.example.repository.UserRepository;
 import com.example.util.TokenUtil;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.security.PermitAll;
@@ -45,11 +47,10 @@ public class AuthenticationResource {
      * HK2 Injection.
      */
     @Context
-    UserRepository dao;
+    UserRepository userRepository;
 
     @Inject
     private StringRedisTemplate stringRedisTemplate;
-
 
     @Value("${example.jwt.key}")
     String key;
@@ -81,6 +82,26 @@ public class AuthenticationResource {
         return Response.ok(token).build();
     }
 
+    @Path("register")
+    @POST
+    @Produces("application/json")
+    @Consumes("application/x-www-form-urlencoded")
+    public Response registerUser(@FormParam("username") String username,
+                                     @FormParam("password") String password) {
+
+        Optional<User> user = userRepository.findOnByUserName(username);
+        if(user.isPresent()){
+            return  Response.status(Response.Status.FOUND).build();
+        }else{
+            User newUser = new User(SequenceBuilder.builder("user"));
+            newUser.setUserName(username);
+            newUser.setPassword(password);
+            newUser.setRoles(new String[]{"user"});
+            userRepository.save(newUser);
+            return  Response.status(Response.Status.CREATED).build();
+        }
+    }
+
     @Path("refresh")
     @GET
     @Produces("application/json")
@@ -90,7 +111,6 @@ public class AuthenticationResource {
         if (TokenUtil.isValid(token, key)) {
             Long id = Long.valueOf(TokenUtil.getId(token, key));
             String tokenInRedis = stringRedisTemplate.opsForValue().get(MessageFormat.format(redisKey, id.toString()));
-
 
             if (null == tokenInRedis || !tokenInRedis.equals(token)) {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -129,7 +149,7 @@ public class AuthenticationResource {
         // Validate the extracted credentials
         User user = null;
         try {
-            user = dao.findByUserName(username);
+            user = userRepository.findByUserName(username);
         } catch (EntityNotFoundException e) {
             logger.info("Invalid username '" + username + "' ");
             throw new NotAuthorizedException("Invalid username '" + username + "' ");
@@ -141,8 +161,10 @@ public class AuthenticationResource {
             logger.info("USER NOT AUTHENTICATED");
             throw new NotAuthorizedException("Invalid username or password");
         }
+
+        if(null == user.getVersion()){
+            user.setVersion(1111);  //啥作用
+        }
         return user;
     }
-
-
 }
