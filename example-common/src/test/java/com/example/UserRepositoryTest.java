@@ -7,20 +7,19 @@ import com.example.repository.UserRepository;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.inject.Inject;
 
 /**
  * Created by binglin on 2016/10/6.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@EnableAutoConfiguration
 public class UserRepositoryTest {
 
-    @Inject
+    @Autowired
     private UserRepository userRepository;
 
     @Rollback(false)

@@ -2,21 +2,20 @@ package com.example;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.inject.Inject;
 
 /**
  * Created by Ming on 2016/10/12.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@EnableAutoConfiguration
 public class RedisTest {
 
-    @Inject
+    @Autowired
     RedisTemplate<String,String> redisTemplate;
 
     @Rollback(false)
