@@ -3,7 +3,7 @@ package com.example;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Created by Ming on 2016/10/12.
  */
 @RunWith(SpringRunner.class)
-@EnableAutoConfiguration
+@SpringBootTest
 public class RedisTest {
 
     @Autowired

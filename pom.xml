@@ -25,10 +25,8 @@
         <druid.version>1.0.13</druid.version>
         <fastjson.version>1.2.5</fastjson.version>
         <mybatis.version>3.4.1</mybatis.version>
-        <boot.version>1.4.1.RELEASE</boot.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-
     </properties>
 
 
@@ -146,6 +144,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
                 <version>4.2.3.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.0.31.Final</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
