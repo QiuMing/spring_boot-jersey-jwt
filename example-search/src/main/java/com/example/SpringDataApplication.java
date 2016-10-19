@@ -10,6 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Spring Boot 启动加载数据 CommandLineRunner
+ */
 @SpringBootApplication
 public class SpringDataApplication implements CommandLineRunner{
 
